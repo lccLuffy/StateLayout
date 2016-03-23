@@ -27,8 +27,8 @@ dependencies {
     compile 'com.pnikosis:materialish-progress:1.7'
 }
 
-def siteUrl = 'https://github.com/lccLuffy/AndroidRefreshRecycler' // 项目的主页
-def gitUrl = 'https://github.com/lccLuffy/AndroidRefreshRecycler.git' // Git仓库的url
+def siteUrl = 'https://github.com/lccLuffy/StateLayout' // 项目的主页
+def gitUrl = 'https://github.com/lccLuffy/StateLayout.git' // Git仓库的url
 group = "com.lcc.luffy"            // Maven Group ID for the artifact，一般填你唯一的包名
 install {
     repositories.mavenInstaller {
@@ -37,7 +37,8 @@ install {
             project {
                 packaging 'aar'
                 // Add your description here
-                name 'Android state layout,RefreshRecyclerView,it can loadmore data with animation'     //项目的描述 你可以多写一点
+                name 'Android state layout,it can easily switch between different state like error,empty with animation'
+                //项目的描述 你可以多写一点
                 url siteUrl
                 // Set your license
                 licenses {
@@ -86,7 +87,7 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = "maven"
-        name = "Refresh"    //发布到JCenter上的项目名字
+        name = "StateLayout"    //发布到JCenter上的项目名字
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]

@@ -4,50 +4,52 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
 /**
  * Created by lcc_luffy on 2016/1/30.
  */
-public class StateLayout extends FrameLayout{
-    protected View contentView;
-    protected View emptyView;
-    protected View errorView;
-    protected View progressView;
+public class StateLayout extends FrameLayout {
+    private View contentView;
+    private View emptyView;
+    private View errorView;
+    private View progressView;
 
-    protected TextView emptyTextView;
-    protected TextView errorTextView;
-    protected TextView progressTextView;
+    private TextView emptyTextView;
+    private TextView errorTextView;
+    private TextView progressTextView;
 
+    private ImageView errorImageView;
+    private ImageView emptyImageView;
 
-    protected Button errorButton;
-    protected Button emptyButton;
 
     public StateLayout(Context context) {
-        this(context,null);
+        this(context, null);
     }
 
 
     public StateLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context,attrs);
+        init(context, attrs);
     }
 
     public StateLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context,attrs);
+        init(context, attrs);
     }
 
-    private void init(Context context,AttributeSet attrs) {
-        parseAttrs(context,attrs);
+    private void init(Context context, AttributeSet attrs) {
+        parseAttrs(context, attrs);
 
         emptyView.setVisibility(View.GONE);
 
@@ -63,82 +65,80 @@ public class StateLayout extends FrameLayout{
 
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.StateLayout, 0, 0);
         int progressViewId;
-        int errorViewId;
-        int emptyViewId;
-        try
-        {
+        Drawable errorDrawable;
+        Drawable emptyDrawable;
+        try {
+            errorDrawable = a.getDrawable(R.styleable.StateLayout_errorDrawable);
+            emptyDrawable = a.getDrawable(R.styleable.StateLayout_emptyDrawable);
             progressViewId = a.getResourceId(R.styleable.StateLayout_progressView, -1);
-            errorViewId = a.getResourceId(R.styleable.StateLayout_errorView, -1);
-            emptyViewId = a.getResourceId(R.styleable.StateLayout_emptyView, -1);
-
-        } finally
-        {
+        } finally {
             a.recycle();
         }
 
         /******************************************************************************************/
 
-        if (progressViewId < 0) {
+        if (progressViewId != -1) {
+            progressView = inflater.inflate(progressViewId, this, false);
+        } else {
             progressView = inflater.inflate(R.layout.view_progress, this, false);
             progressTextView = (TextView) progressView.findViewById(R.id.progressTextView);
-        } else {
-            progressView = inflater.inflate(progressViewId, this, false);
         }
+
         addView(progressView);
         /******************************************************************************************/
 
         /******************************************************************************************/
 
-        if (errorViewId < 0) {
-            errorView = inflater.inflate(R.layout.view_error, this, false);
-            errorTextView = (TextView) errorView.findViewById(R.id.errorTextView);
-            errorButton = (Button) errorView.findViewById(R.id.errorButton);
-        } else {
-            errorView = inflater.inflate(errorViewId, this, false);
+        errorView = inflater.inflate(R.layout.view_error, this, false);
+        errorTextView = (TextView) errorView.findViewById(R.id.errorTextView);
+        errorImageView = (ImageView) errorView.findViewById(R.id.errorImageView);
+        if (errorDrawable != null) {
+            errorImageView.setImageDrawable(errorDrawable);
         }
-
         addView(errorView);
         /******************************************************************************************/
 
         /******************************************************************************************/
 
-        if (emptyViewId < 0) {
-            emptyView = inflater.inflate(R.layout.view_empty, this, false);
-            emptyTextView = (TextView) emptyView.findViewById(R.id.emptyTextView);
-            emptyButton = (Button) emptyView.findViewById(R.id.emptyButton);
-        } else {
-            emptyView = inflater.inflate(emptyViewId, this, false);
+        emptyView = inflater.inflate(R.layout.view_empty, this, false);
+        emptyTextView = (TextView) emptyView.findViewById(R.id.emptyTextView);
+        emptyImageView = (ImageView) emptyView.findViewById(R.id.emptyImageView);
+        if (emptyDrawable != null) {
+            emptyImageView.setImageDrawable(emptyDrawable);
         }
-
         addView(emptyView);
         /******************************************************************************************/
 
     }
 
-    private void checkIsContentView(View view)
-    {
-        Log.i("state",view != null ? view.getClass().getName() : "add null view");
-        if(contentView == null && view != errorView && view != progressView && view != emptyView)
-        {
+    private void checkIsContentView(View view) {
+        Log.i("state", view != null ? view.getClass().getName() : "add null view");
+        if (contentView == null && view != errorView && view != progressView && view != emptyView) {
             contentView = view;
             currentShowingView = contentView;
         }
     }
 
+    public ImageView getErrorImageView() {
+        return errorImageView;
+    }
+
+    public ImageView getEmptyImageView() {
+        return emptyImageView;
+    }
 
     private View currentShowingView;
-    public void switchWithAnimation(final View toBeShown)
-    {
+
+    private void switchWithAnimation(final View toBeShown) {
         final View toBeHided = currentShowingView;
-        if(toBeHided == toBeShown)
+        if (toBeHided == toBeShown)
             return;
 
-        if(toBeHided != null)
-        {
+        if (toBeHided != null) {
             toBeHided.animate()
-                    .scaleX(0)
-                    .scaleY(0)
-                    .alpha(0)
+                    .scaleX(0.2f)
+                    .scaleY(0.2f)
+                    .alpha(0.25f)
                     .setDuration(200).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
@@ -147,14 +147,13 @@ public class StateLayout extends FrameLayout{
             });
         }
 
-        if(toBeShown != null)
-        {
+        if (toBeShown != null) {
             currentShowingView = toBeShown;
             toBeShown.animate()
                     .scaleX(1)
                     .scaleY(1)
                     .alpha(1)
-                    .setDuration(200).setListener(new AnimatorListenerAdapter() {
+                    .setDuration(150).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     toBeShown.setVisibility(VISIBLE);
@@ -164,66 +163,56 @@ public class StateLayout extends FrameLayout{
     }
 
 
-
-    public void showContentView()
-    {
+    public void showContentView() {
         switchWithAnimation(contentView);
     }
-    public void showEmptyView()
-    {
+
+    public void showEmptyView() {
         showEmptyView(null);
     }
 
-    public void showEmptyView(String msg)
-    {
+    public void showEmptyView(String msg) {
         onHideContentView();
         emptyTextView.setText(msg);
         switchWithAnimation(emptyView);
     }
 
-    public void showErrorView()
-    {
+    public void showErrorView() {
         showErrorView(null);
     }
 
-    public void showErrorView(String msg)
-    {
+    public void showErrorView(String msg) {
         onHideContentView();
         if (msg != null)
             errorTextView.setText(msg);
         switchWithAnimation(errorView);
     }
 
-    public void showProgressView()
-    {
+    public void showProgressView() {
         showProgressView(null);
     }
-    public void showProgressView(String msg)
-    {
+
+    public void showProgressView(String msg) {
         onHideContentView();
         if (msg != null)
             progressTextView.setText(msg);
         switchWithAnimation(progressView);
     }
 
-    public void setErrorAction(String action, final OnClickListener onErrorButtonClickListener)
-    {
-        errorButton.setText(action);
-        errorButton.setOnClickListener(onErrorButtonClickListener);
+    public void setErrorAction(@Nullable String action, final OnClickListener onErrorButtonClickListener) {
+        errorTextView.setText(action);
+        errorView.setOnClickListener(onErrorButtonClickListener);
     }
 
 
-    public void setEmptyAction(String action, final OnClickListener onEmptyButtonClickListener)
-    {
-        emptyButton.setText(action);
-        emptyButton.setOnClickListener(onEmptyButtonClickListener);
+    public void setEmptyAction(@Nullable String action, final OnClickListener onEmptyButtonClickListener) {
+        emptyTextView.setText(action);
+        emptyView.setOnClickListener(onEmptyButtonClickListener);
     }
 
-    protected void onHideContentView()
-    {
+    protected void onHideContentView() {
         //Override me
     }
-
 
 
     /**
