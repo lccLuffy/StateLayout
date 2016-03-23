@@ -16,8 +16,7 @@
         <ImageView
             android:id="@+id/emptyImageView"
             android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@mipmap/ic_empty" />
+            android:layout_height="100dp" />
 
         <TextView
             android:id="@+id/emptyTextView"

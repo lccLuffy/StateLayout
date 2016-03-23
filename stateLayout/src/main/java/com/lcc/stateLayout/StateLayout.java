@@ -92,6 +92,8 @@ public class StateLayout extends FrameLayout {
         errorImageView = (ImageView) errorView.findViewById(R.id.errorImageView);
         if (errorDrawable != null) {
             errorImageView.setImageDrawable(errorDrawable);
+        } else {
+            errorImageView.setImageResource(R.mipmap.ic_error);
         }
         addView(errorView);
         /******************************************************************************************/
@@ -103,6 +105,8 @@ public class StateLayout extends FrameLayout {
         emptyImageView = (ImageView) emptyView.findViewById(R.id.emptyImageView);
         if (emptyDrawable != null) {
             emptyImageView.setImageDrawable(emptyDrawable);
+        } else {
+            emptyImageView.setImageResource(R.mipmap.ic_empty);
         }
         addView(emptyView);
         /******************************************************************************************/

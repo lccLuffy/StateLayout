@@ -15,8 +15,7 @@
         <ImageView
             android:id="@+id/errorImageView"
             android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@mipmap/ic_error" />
+            android:layout_height="100dp" />
 
         <TextView
             android:id="@+id/errorTextView"
