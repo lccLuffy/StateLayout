@@ -1,13 +1,11 @@
 package com.lcc.stateLayout;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,7 +110,6 @@ public class StateLayout extends FrameLayout {
     }
 
     private void checkIsContentView(View view) {
-        Log.i("state", view != null ? view.getClass().getName() : "add null view");
         if (contentView == null && view != errorView && view != progressView && view != emptyView) {
             contentView = view;
             currentShowingView = contentView;
@@ -135,30 +132,12 @@ public class StateLayout extends FrameLayout {
             return;
 
         if (toBeHided != null) {
-            toBeHided.animate()
-                    .scaleX(0.2f)
-                    .scaleY(0.2f)
-                    .alpha(0.25f)
-                    .setDuration(200).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    toBeHided.setVisibility(GONE);
-                }
-            });
+            toBeHided.setVisibility(GONE);
         }
 
         if (toBeShown != null) {
             currentShowingView = toBeShown;
-            toBeShown.animate()
-                    .scaleX(1)
-                    .scaleY(1)
-                    .alpha(1)
-                    .setDuration(150).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    toBeShown.setVisibility(VISIBLE);
-                }
-            });
+            toBeShown.setVisibility(VISIBLE);
         }
     }
 
@@ -173,7 +152,8 @@ public class StateLayout extends FrameLayout {
 
     public void showEmptyView(String msg) {
         onHideContentView();
-        emptyTextView.setText(msg);
+        if (!TextUtils.isEmpty(msg))
+            emptyTextView.setText(msg);
         switchWithAnimation(emptyView);
     }
 
